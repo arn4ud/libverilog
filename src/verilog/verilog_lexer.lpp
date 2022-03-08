@@ -31,7 +31,7 @@ using token = verilog::VerilogParser::token;
 
 #undef YY_DECL
 #define YY_DECL \
-int verilog::VerilogLexer::yylex(verilog::VerilogParser::semantic_type* const lval)
+int verilog::VerilogLexer::yylex(verilog::VerilogParser::value_type* const lval)
 
 %}
 
@@ -121,22 +121,58 @@ wire			{ return token::T_WIRE; }
 "(*"			{ return token::T_PSTAR; }
 "*)"			{ return token::T_STARP; }
 
-{UNSIGNED_NUMBER}	{ return token::T_DecNumber; }
-{DEC_NUMBER}		{ return token::T_DecNumber; }
-{DEC_NUMBER_X}		{ return token::T_DecNumber; }
-{DEC_NUMBER_Z}		{ return token::T_DecNumber; }
-{BIN_NUMBER}		{ return token::T_BinNumber; }
-{OCT_NUMBER}		{ return token::T_OctNumber; }
-{HEX_NUMBER}		{ return token::T_HexNumber; }
-{REAL_NUMBER}		{ return token::T_RealNumber; }
-{REAL_NUMBER_E}		{ return token::T_RealNumber; }
+{UNSIGNED_NUMBER} {
+    lval->emplace<std::string>(YYText());
+    return token::T_DecNumber;
+}
+{DEC_NUMBER} {
+    lval->emplace<std::string>(YYText());
+    return token::T_DecNumber;
+}
+{DEC_NUMBER_X} {
+    lval->emplace<std::string>(YYText());
+    return token::T_DecNumber;
+}
+{DEC_NUMBER_Z} {
+    lval->emplace<std::string>(YYText());
+    return token::T_DecNumber;
+}
+{BIN_NUMBER} {
+    lval->emplace<std::string>(YYText());
+    return token::T_BinNumber;
+}
+{OCT_NUMBER} {
+    lval->emplace<std::string>(YYText());
+    return token::T_OctNumber;
+}
+{HEX_NUMBER} {
+    lval->emplace<std::string>(YYText());
+    return token::T_HexNumber;
+}
+{REAL_NUMBER} {
+    lval->emplace<std::string>(YYText());
+    return token::T_RealNumber;
+}
+{REAL_NUMBER_E} {
+    lval->emplace<std::string>(YYText());
+    return token::T_RealNumber;
+}
 
-{STRING}		{ return token::T_String; }
+{STRING} {
+    lval->emplace<std::string>(YYText());
+    return token::T_String;
+}
 
-{SIMPLE_IDENTIFIER}	{ return token::T_SimpleIdentifier; }
-{ESCAPED_IDENTIFIER}	{ return token::T_EscapedIdentifier; }
+{SIMPLE_IDENTIFIER}	{
+    lval->emplace<std::string>(YYText());
+    return token::T_SimpleIdentifier;
+}
+{ESCAPED_IDENTIFIER} {
+    lval->emplace<std::string>(YYText());
+    return token::T_EscapedIdentifier;
+}
 
-":"|"."|"{"|"}"|"["|"]"|","|"*"|";"|"="|"-"|"+"|"|"|"("|")" {
+":"|"."|"{"|"}"|"["|"]"|","|"*"|";"|"="|"-"|"+"|"|"|"("|")"|"#" {
   return yytext[0];
 }
 

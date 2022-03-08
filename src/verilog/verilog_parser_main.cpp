@@ -20,7 +20,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include <cstdlib>
+#include <fstream>
+#include <iostream>
 #include <verilog/verilog_lexer.h>
 #include <verilog/verilog_parser.h>
 
@@ -30,10 +31,13 @@ public:
 
 int main(int argc, char* argv[])
 {
-    verilog::VerilogLexer lexer;
     MyVerilogReader reader;
+    verilog::VerilogLexer lexer;
     verilog::VerilogParser parser(lexer, &reader);
-    parser.parse();
+    for (int arg = 1; arg < argc; ++arg) {
+        std::ifstream ifs(argv[arg]);
+        lexer.switch_streams(ifs, std::cout);
+        parser.parse();
+    }
     return 0;
 }
-

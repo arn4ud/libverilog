@@ -20,20 +20,26 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+#include <fstream>
 #include <iostream>
 #include <verilog/verilog_lexer.h>
 
 int main(int argc, char* argv[])
 {
     verilog::VerilogLexer lexer;
-    int t;
-    verilog::VerilogParser::semantic_type yylval;
-    while ((t = lexer.yylex(&yylval)) != 0) {
-       std::cout
-           << "lineno: " << lexer.lineno()
-           << " token: " << t
-//            << " text: " << yylval.sv
-           << std::endl;
+    for (int arg = 1; arg < argc; ++arg) {
+        std::ifstream ifs(argv[arg]);
+        lexer.switch_streams(ifs, std::cout);
+
+        int t;
+        verilog::VerilogParser::semantic_type yylval;
+        while ((t = lexer.yylex(&yylval)) != 0) {
+            std::cout
+                << "lineno: " << lexer.lineno() << " token: " << t
+                << " text[" << lexer.YYLeng() << "]: " << lexer.YYText()
+                << std::endl;
+        }
+        return 0;
     }
     return 0;
 }
