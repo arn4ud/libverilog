@@ -1,0 +1,125 @@
+%{
+#include <string>
+#include <variant>
+
+#include "verilog_lexer.h"
+
+/* typedef to make the returns for the tokens shorter */
+using token = verilog::VerilogParser::token;
+
+#undef YY_DECL
+#define YY_DECL \
+int verilog::VerilogLexer::yylex(verilog::VerilogParser::semantic_type* const lval)
+
+%}
+
+%option c++
+%option batch
+/* Make the generated scanner run in debug mode. */
+%option debug
+%option yylineno
+
+%option noinput
+%option nounput
+%option nounistd
+%option noyywrap
+%option nodefault
+
+%option yyclass="verilog::VerilogLexer"
+
+/* A.8.7 Numbers */
+
+UNDERSCORE		"_"
+DOT			"."
+EXP			"e"|"E"
+SIGN			"+"|"-"
+
+DEC_BASE		"'"[sS]?[dD]
+BIN_BASE		"'"[sS]?[bB]
+OCT_BASE		"'"[sS]?[oO]
+HEX_BASE		"'"[sS]?[hH]
+
+NON_ZERO_DEC_DIGIT	[1-9]
+DEC_DIGIT		[0-9]
+BIN_DIGIT		{X_DIGIT}|{Z_DIGIT}|[01]
+OCT_DIGIT		{X_DIGIT}|{Z_DIGIT}|[0-7]
+HEX_DIGIT		{X_DIGIT}|{Z_DIGIT}|[0-9a-fA-F]
+X_DIGIT			"x"|"X"
+Z_DIGIT			"z"|"Z"|"?"
+
+SIZE			{NON_ZERO_DEC_DIGIT}({UNDERSCORE}|{DEC_DIGIT})*
+
+UNSIGNED_NUMBER		{DEC_DIGIT}({UNDERSCORE}|{DEC_DIGIT})*
+BIN_VALUE		{BIN_DIGIT}({UNDERSCORE}|{BIN_DIGIT})*
+OCT_VALUE		{OCT_DIGIT}({UNDERSCORE}|{OCT_DIGIT})*
+HEX_VALUE		{HEX_DIGIT}({UNDERSCORE}|{HEX_DIGIT})*
+
+DEC_NUMBER		{SIZE}?{DEC_BASE}{UNSIGNED_NUMBER}
+DEC_NUMBER_X        {SIZE}?{DEC_BASE}{X_DIGIT}{UNDERSCORE}*
+DEC_NUMBER_Z        {SIZE}?{DEC_BASE}{Z_DIGIT}{UNDERSCORE}*
+
+BIN_NUMBER		{SIZE}?{BIN_BASE}{BIN_VALUE}
+OCT_NUMBER		{SIZE}?{OCT_BASE}{OCT_VALUE}
+HEX_NUMBER		{SIZE}?{HEX_BASE}{HEX_VALUE}
+
+REAL_NUMBER		{UNSIGNED_NUMBER}{DOT}{UNSIGNED_NUMBER}
+REAL_NUMBER_E		{UNSIGNED_NUMBER}({DOT}{UNSIGNED_NUMBER})?{EXP}{SIGN}?{UNSIGNED_NUMBER}
+
+/* A.8.8 Strings */
+
+STRING			\"[^\"\\\n]*\"
+
+/* A.9.3 Identifiers */
+
+SIMPLE_IDENTIFIER	[a-zA-Z_][a-zA-Z0-9_$]*
+SYSTEM_IDENTIFIER	\$[a-zA-Z0-9_$]+
+ESCAPED_IDENTIFIER	\\[^ \n\r\t]*
+
+%%
+
+`timescale[^\n]*
+
+ /* <<EOF>>				{ return -1; } */
+[ \n\r\t]			/* skip white spaces */
+
+  /* It would be more efficient to detect the start comment marker and
+     discard everything until the end marker using code. */
+"//".*				/* skip one-line comments */
+"/*"([^*]|"*"[^/])*"*/"		/* skip block comments. */
+"/*"[^*]*[*]+([^*/][^*]*[*]+)"*/"       /* skip block comment */
+
+assign			{ return token::T_ASSIGN; }
+module			{ return token::T_MODULE; }
+endmodule		{ return token::T_ENDMODULE; }
+input			{ return token::T_INPUT; }
+inout			{ return token::T_INOUT; }
+output			{ return token::T_OUTPUT; }
+wire			{ return token::T_WIRE; }
+
+"(*"			{ return token::T_PSTAR; }
+"*)"			{ return token::T_STARP; }
+
+{UNSIGNED_NUMBER}	{ return token::T_DecNumber; }
+{DEC_NUMBER}		{ return token::T_DecNumber; }
+{DEC_NUMBER_X}		{ return token::T_DecNumber; }
+{DEC_NUMBER_Z}		{ return token::T_DecNumber; }
+{BIN_NUMBER}		{ return token::T_BinNumber; }
+{OCT_NUMBER}		{ return token::T_OctNumber; }
+{HEX_NUMBER}		{ return token::T_HexNumber; }
+{REAL_NUMBER}		{ return token::T_RealNumber; }
+{REAL_NUMBER_E}		{ return token::T_RealNumber; }
+
+{STRING}		{ return token::T_String; }
+
+{SIMPLE_IDENTIFIER}	{ return token::T_SimpleIdentifier; }
+{ESCAPED_IDENTIFIER}	{ return token::T_EscapedIdentifier; }
+
+":"|"."|"{"|"}"|"["|"]"|","|"*"|";"|"="|"-"|"+"|"|"|"("|")" {
+  return yytext[0];
+}
+
+. {  
+    std::cerr << "Failed to match : " << yytext << '\n';
+}
+
+%%
