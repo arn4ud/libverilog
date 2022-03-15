@@ -22,13 +22,7 @@ BUILT_SOURCES = \
 	verilog_parser.h
 CLEANFILES = $(BUILT_SOURCES)
 
-noinst_PROGRAMS = verilog_lexer_main verilog_parser_main verilog_reader_main
-
-verilog_lexer_main_SOURCES = verilog_lexer_main.cpp
-verilog_lexer_main_LDADD = libverilog.la
-
-verilog_parser_main_SOURCES = verilog_parser_main.cpp
-verilog_parser_main_LDADD = libverilog.la
+noinst_PROGRAMS = verilog_reader_main
 
 verilog_reader_main_SOURCES = verilog_reader_main.cpp
 verilog_reader_main_LDADD = libverilog.la

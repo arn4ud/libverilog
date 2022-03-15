@@ -3,8 +3,10 @@ add_library(verilog STATIC "")
 target_include_directories(
   verilog
    PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/.
-    ${CMAKE_CURRENT_SOURCE_DIR}/..)
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+   PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR})
 
 FLEX_TARGET(
   verilog_lexer
@@ -38,9 +40,5 @@ install(
     PUBLIC_HEADER
       DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/verilog)
 
-add_executable(verilog_lexer_main verilog_lexer_main.cpp)
-target_link_libraries(verilog_lexer_main verilog)
-add_executable(verilog_parser_main verilog_parser_main.cpp)
-target_link_libraries(verilog_parser_main verilog)
 add_executable(verilog_reader_main verilog_reader_main.cpp)
 target_link_libraries(verilog_reader_main verilog)
