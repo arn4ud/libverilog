@@ -83,6 +83,10 @@ class VerilogReader;
 %token<std::string> T_SystemIdentifier
 %token<std::string> T_EscapedIdentifier
 
+%type<std::string> identifier
+%type<std::string> simple_identifier
+%type<std::string> escaped_identifier
+
 %%
 
 /* A.1 Source text */
@@ -127,7 +131,9 @@ description
 
 module_declaration
     : ..attribute_instance..
-      T_MODULE identifier .module_parameter_list. '(' list_of_ports ')' ';'
+      T_MODULE identifier
+        { reader->visitModule(std::move($3)); } 
+        .module_parameter_list. '(' list_of_ports ')' ';'
           ..module_item..
       T_ENDMODULE
     | ..attribute_instance..
@@ -2064,25 +2070,25 @@ attribute_specification
 /* A.9.3 Identifiers */
 
 identifier
-    : simple_identifier
-    | escaped_identifier
+    : simple_identifier  { $$ = $1; }
+    | escaped_identifier { $$ = $1; }
     ;
-
-hierarchical_identifier
+ 
+ hierarchical_identifier
     : identifier
 //  : { identifier [ '[' constant_expression ']' ] '.' } identifier
     ;
-
+ 
 // [ "a-zA-Z_" ]{ [ "a-zA-Z0-9_$" ] }
 simple_identifier
     : T_SimpleIdentifier
     ;
-
-// '$' [ "a-zA-Z0-9_$" ]{ [ "a-zA-Z0-9_$" ] }
-system_identifier
-    : T_SystemIdentifier
-    ;
-
+ 
+// // '$' [ "a-zA-Z0-9_$" ]{ [ "a-zA-Z0-9_$" ] }
+// system_identifier
+//     : T_SystemIdentifier
+//     ;
+ 
 // '\' {Any_ASCII_character_except_white_space} white_space
 escaped_identifier
     : T_EscapedIdentifier

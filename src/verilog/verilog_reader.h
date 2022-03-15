@@ -38,6 +38,8 @@ public:
 
     void read(const std::filesystem::path&); 
 
+    virtual void visitModule(std::string&& moduleName) {} 
+
   private:
     VerilogLexer* _lexer;
     VerilogParser* _parser;

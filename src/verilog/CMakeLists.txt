@@ -2,6 +2,8 @@ add_library(verilog STATIC "")
 
 target_include_directories(
   verilog
+   PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}
    PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/.
     ${CMAKE_CURRENT_SOURCE_DIR}/..)
@@ -30,17 +32,17 @@ target_sources(
     ${CMAKE_CURRENT_SOURCE_DIR}/verilog_reader.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/verilog_writer.cpp)
 
-include(GNUInstallDirs)
-install(
-  TARGETS verilog
-    ARCHIVE
-      DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    PUBLIC_HEADER
-      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/verilog)
-
-add_executable(verilog_lexer_main verilog_lexer_main.cpp)
-target_link_libraries(verilog_lexer_main verilog)
-add_executable(verilog_parser_main verilog_parser_main.cpp)
-target_link_libraries(verilog_parser_main verilog)
-add_executable(verilog_reader_main verilog_reader_main.cpp)
-target_link_libraries(verilog_reader_main verilog)
+#include(GNUInstallDirs)
+#install(
+#  TARGETS verilog
+#    ARCHIVE
+#      DESTINATION ${CMAKE_INSTALL_LIBDIR}
+#    PUBLIC_HEADER
+#      DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/verilog)
+#
+#add_executable(verilog_lexer_main verilog_lexer_main.cpp)
+#target_link_libraries(verilog_lexer_main verilog)
+#add_executable(verilog_parser_main verilog_parser_main.cpp)
+#target_link_libraries(verilog_parser_main verilog)
+#add_executable(verilog_reader_main verilog_reader_main.cpp)
+#target_link_libraries(verilog_reader_main verilog)
