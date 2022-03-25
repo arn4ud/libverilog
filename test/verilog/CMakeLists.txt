@@ -1,5 +1,7 @@
 set(verilog_tests
   VerilogTest0.cpp
+  VerilogTest1.cpp
+  VerilogTest2.cpp
 )
 
 add_executable(verilogTests ${verilog_tests})
