@@ -25,7 +25,7 @@ using token = verilog::VerilogParser::token;
 
 #undef YY_DECL
 #define YY_DECL \
-int verilog::VerilogLexer::yylex(verilog::VerilogParser::value_type* const lval)
+int verilog::VerilogLexer::yylex(verilog::VerilogParser::semantic_type* const lval)
 
 %}
 
