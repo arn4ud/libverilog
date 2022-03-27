@@ -40,5 +40,31 @@ install(
     PUBLIC_HEADER
       DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/verilog)
 
+add_executable(verilog_lexer_test verilog_lexer_test.cpp)
+target_include_directories(
+  verilog_lexer_test
+   PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(verilog_lexer_test verilog gmock_main)
+add_test(NAME verilog_lexer_test COMMAND verilog_lexer_test)
+
+add_executable(verilog_lexer_main verilog_lexer_main.cpp)
+target_include_directories(
+  verilog_lexer_main
+   PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(verilog_lexer_main verilog)
+
+add_executable(verilog_parser_main verilog_parser_main.cpp)
+target_include_directories(
+  verilog_parser_main
+   PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR})
+target_link_libraries(verilog_parser_main verilog)
+
+
 add_executable(verilog_reader_main verilog_reader_main.cpp)
 target_link_libraries(verilog_reader_main verilog)

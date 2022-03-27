@@ -116,53 +116,53 @@ wire			{ return token::T_WIRE; }
 "*)"			{ return token::T_STARP; }
 
 {UNSIGNED_NUMBER} {
-    lval->emplace<std::string>(YYText());
+    lval->emplace<std::string>(yytext);
     return token::T_DecNumber;
 }
 {DEC_NUMBER} {
-    lval->emplace<std::string>(YYText());
+    lval->emplace<std::string>(yytext);
     return token::T_DecNumber;
 }
 {DEC_NUMBER_X} {
-    lval->emplace<std::string>(YYText());
+    lval->emplace<std::string>(yytext);
     return token::T_DecNumber;
 }
 {DEC_NUMBER_Z} {
-    lval->emplace<std::string>(YYText());
+    lval->emplace<std::string>(yytext);
     return token::T_DecNumber;
 }
 {BIN_NUMBER} {
-    lval->emplace<std::string>(YYText());
+    lval->emplace<std::string>(yytext);
     return token::T_BinNumber;
 }
 {OCT_NUMBER} {
-    lval->emplace<std::string>(YYText());
+    lval->emplace<std::string>(yytext);
     return token::T_OctNumber;
 }
 {HEX_NUMBER} {
-    lval->emplace<std::string>(YYText());
+    lval->emplace<std::string>(yytext);
     return token::T_HexNumber;
 }
 {REAL_NUMBER} {
-    lval->emplace<std::string>(YYText());
+    lval->emplace<std::string>(yytext);
     return token::T_RealNumber;
 }
 {REAL_NUMBER_E} {
-    lval->emplace<std::string>(YYText());
+    lval->emplace<std::string>(yytext);
     return token::T_RealNumber;
 }
 
 {STRING} {
-    lval->emplace<std::string>(YYText());
+    lval->emplace<std::string>(yytext);
     return token::T_String;
 }
 
-{SIMPLE_IDENTIFIER}	{
-    lval->emplace<std::string>(YYText());
+{SIMPLE_IDENTIFIER} {
+    lval->emplace<std::string>(yytext);
     return token::T_SimpleIdentifier;
 }
 {ESCAPED_IDENTIFIER} {
-    lval->emplace<std::string>(YYText());
+    lval->emplace<std::string>(yytext);
     return token::T_EscapedIdentifier;
 }
 
