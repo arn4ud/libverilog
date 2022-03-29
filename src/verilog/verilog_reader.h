@@ -35,8 +35,8 @@ public:
     void read(const std::filesystem::path&); 
 
   private:
-    VerilogLexer* _lexer;
-    VerilogParser* _parser;
+    VerilogLexer* lexer_;
+    VerilogParser* parser_;
 };
 
 }  // namespace verilog

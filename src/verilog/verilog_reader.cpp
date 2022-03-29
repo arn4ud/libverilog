@@ -16,17 +16,24 @@
 
 #include "verilog_reader.h"
 
+#include <fstream>
+
 #include "verilog_lexer.h"
 #include "verilog_parser.h"
 
 namespace verilog {
 
 VerilogReader::VerilogReader()
-    : _lexer(new VerilogLexer())
-    , _parser(new VerilogParser(*_lexer, *this)) {}
+    : lexer_(new VerilogLexer())
+    , parser_(new VerilogParser(*lexer_, *this)) {}
 
 void VerilogReader::read(const std::filesystem::path& p){
-  _parser->parse();
+    std::ifstream ifs(p);
+    if (!ifs) {
+        std::cerr << p << ": no such file\n";
+    }
+    lexer_->switch_streams(&ifs, nullptr);
+    parser_->parse();
 }
 
 }  // namespace verilog
