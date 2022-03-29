@@ -23,7 +23,7 @@ namespace verilog {
 
 VerilogReader::VerilogReader()
     : _lexer(new VerilogLexer())
-    , _parser(new VerilogParser(*_lexer, this)) {}
+    , _parser(new VerilogParser(*_lexer, *this)) {}
 
 void VerilogReader::read(const std::filesystem::path& p){
   _parser->parse();

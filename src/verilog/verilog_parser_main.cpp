@@ -27,7 +27,7 @@ public:
 int main(int argc, char* argv[]) {
     MyVerilogReader reader;
     verilog::VerilogLexer lexer;
-    verilog::VerilogParser parser(lexer, &reader);
+    verilog::VerilogParser parser(lexer, reader);
 
     parser.set_debug_level(1);
     for (int arg = 1; arg < argc; ++arg) {

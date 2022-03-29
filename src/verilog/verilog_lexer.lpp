@@ -20,28 +20,22 @@
 
 #include "verilog_lexer.h"
 
-/* typedef to make the returns for the tokens shorter */
-using token = verilog::VerilogParser::token;
-
 #undef YY_DECL
 #define YY_DECL \
-int verilog::VerilogLexer::yylex(verilog::VerilogParser::semantic_type* const lval)
-
+verilog::VerilogParser::symbol_type verilog::VerilogLexer::get_token()
 %}
 
 %option c++
 %option batch
-/* Make the generated scanner run in debug mode. */
 %option debug
 %option yylineno
+%option yyclass="verilog::VerilogLexer"
 
 %option noinput
 %option nounput
 %option nounistd
 %option noyywrap
 %option nodefault
-
-%option yyclass="verilog::VerilogLexer"
 
 /* A.8.7 Numbers */
 
@@ -95,8 +89,9 @@ ESCAPED_IDENTIFIER	\\[^ \n\r\t]*
 
 `timescale[^\n]*
 
- /* <<EOF>>				{ return -1; } */
-[ \n\r\t]			/* skip white spaces */
+<<EOF>> { return verilog::VerilogParser::make_T_END(); }
+
+[ \f\n\r\t\v] { /* skip white spaces */ }
 
   /* It would be more efficient to detect the start comment marker and
      discard everything until the end marker using code. */
@@ -104,71 +99,71 @@ ESCAPED_IDENTIFIER	\\[^ \n\r\t]*
 "/*"([^*]|"*"[^/])*"*/"		/* skip block comments. */
 "/*"[^*]*[*]+([^*/][^*]*[*]+)"*/"       /* skip block comment */
 
-assign			{ return token::T_ASSIGN; }
-module			{ return token::T_MODULE; }
-endmodule		{ return token::T_ENDMODULE; }
-input			{ return token::T_INPUT; }
-inout			{ return token::T_INOUT; }
-output			{ return token::T_OUTPUT; }
-wire			{ return token::T_WIRE; }
-
-"(*"			{ return token::T_PSTAR; }
-"*)"			{ return token::T_STARP; }
+"assign" { return verilog::VerilogParser::make_T_ASSIGN(); }
+"module" { return verilog::VerilogParser::make_T_MODULE(); }
+"endmodule" { return verilog::VerilogParser::make_T_ENDMODULE(); }
+"input" { return verilog::VerilogParser::make_T_INPUT(); }
+"inout" { return verilog::VerilogParser::make_T_INOUT(); }
+"output" { return verilog::VerilogParser::make_T_OUTPUT(); }
+"wire" { return verilog::VerilogParser::make_T_WIRE(); }
+"(*" { return verilog::VerilogParser::make_T_PSTAR(); }
+"*)" { return verilog::VerilogParser::make_T_STARP(); }
 
 {UNSIGNED_NUMBER} {
-    lval->emplace<std::string>(yytext);
-    return token::T_DecNumber;
+    return verilog::VerilogParser::make_T_DecNumber(yytext);
 }
 {DEC_NUMBER} {
-    lval->emplace<std::string>(yytext);
-    return token::T_DecNumber;
+    return verilog::VerilogParser::make_T_DecNumber(yytext);
 }
 {DEC_NUMBER_X} {
-    lval->emplace<std::string>(yytext);
-    return token::T_DecNumber;
+    return verilog::VerilogParser::make_T_DecNumber(yytext);
 }
 {DEC_NUMBER_Z} {
-    lval->emplace<std::string>(yytext);
-    return token::T_DecNumber;
+    return verilog::VerilogParser::make_T_DecNumber(yytext);
 }
 {BIN_NUMBER} {
-    lval->emplace<std::string>(yytext);
-    return token::T_BinNumber;
+    return verilog::VerilogParser::make_T_BinNumber(yytext);
 }
 {OCT_NUMBER} {
-    lval->emplace<std::string>(yytext);
-    return token::T_OctNumber;
+    return verilog::VerilogParser::make_T_OctNumber(yytext);
 }
 {HEX_NUMBER} {
-    lval->emplace<std::string>(yytext);
-    return token::T_HexNumber;
+    return verilog::VerilogParser::make_T_HexNumber(yytext);
 }
 {REAL_NUMBER} {
-    lval->emplace<std::string>(yytext);
-    return token::T_RealNumber;
+    return verilog::VerilogParser::make_T_RealNumber(yytext);
 }
 {REAL_NUMBER_E} {
-    lval->emplace<std::string>(yytext);
-    return token::T_RealNumber;
+    return verilog::VerilogParser::make_T_RealNumber(yytext);
 }
 
 {STRING} {
-    lval->emplace<std::string>(yytext);
-    return token::T_String;
+    return verilog::VerilogParser::make_T_String(yytext);
 }
 
 {SIMPLE_IDENTIFIER} {
-    lval->emplace<std::string>(yytext);
-    return token::T_SimpleIdentifier;
+    return verilog::VerilogParser::make_T_SimpleIdentifier(yytext);
 }
 {ESCAPED_IDENTIFIER} {
-    lval->emplace<std::string>(yytext);
-    return token::T_EscapedIdentifier;
+    return verilog::VerilogParser::make_T_EscapedIdentifier(yytext);
 }
 
-":"|"."|"{"|"}"|"["|"]"|","|"*"|";"|"="|"-"|"+"|"|"|"("|")"|"#" {
-  return yytext[0];
-}
+"," { return verilog::VerilogParser::make_COMMA(); }
+":" { return verilog::VerilogParser::make_COLON(); }
+"." { return verilog::VerilogParser::make_DOT(); }
+"(" { return verilog::VerilogParser::make_LPAREN(); }
+")" { return verilog::VerilogParser::make_RPAREN(); }
+"{" { return verilog::VerilogParser::make_LBRACE(); }
+"}" { return verilog::VerilogParser::make_RBRACE(); }
+"[" { return verilog::VerilogParser::make_LBRACKET(); }
+"]" { return verilog::VerilogParser::make_RBRACKET(); }
+";" { return verilog::VerilogParser::make_SEMICOLON(); }
+"*" { return verilog::VerilogParser::make_MULT(); }
+"=" { return verilog::VerilogParser::make_EQUAL(); }
+"-" { return verilog::VerilogParser::make_MINUS(); }
+"+" { return verilog::VerilogParser::make_PLUS(); }
+"|" { return verilog::VerilogParser::make_OR(); }
+"#" { return verilog::VerilogParser::make_SHARP(); } 
 
 . {  
     std::cerr << "Failed to match : " << yytext << '\n';

@@ -18,16 +18,6 @@
 #include <iostream>
 #include <verilog/verilog_lexer.h>
 
-namespace {
-
-// We need a helper function because we cannot reuse lval.
-int get_token(verilog::VerilogLexer& lexer) {
-    verilog::VerilogParser::semantic_type lval;
-    return lexer.yylex(&lval);
-}
-
-}  // namespace
-
 int main(int argc, char* argv[]) {
     verilog::VerilogLexer lexer;
 
@@ -41,7 +31,7 @@ int main(int argc, char* argv[]) {
         lexer.switch_streams(&ifs, nullptr);
         std::cout << "reading " << argv[arg] << '\n';
 
-        while (get_token(lexer) != 0) {
+        while (lexer.get_token().type != 0) {
             // continue
         }
     }
