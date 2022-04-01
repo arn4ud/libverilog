@@ -14,26 +14,31 @@
  * limitations under the License.
  */
 
-#include "verilog_reader.h"
-
 #include <fstream>
+#include <iostream>
 
 #include "verilog_lexer.h"
 #include "verilog_parser.h"
 
-namespace verilog {
+class MyVerilogReader final : public verilog::VerilogReader {
+public:
+};
 
-VerilogReader::VerilogReader()
-    : lexer_(new VerilogLexer())
-    , parser_(new VerilogParser(*lexer_, *this)) {}
+int main(int argc, char* argv[]) {
+    MyVerilogReader reader;
+    verilog::VerilogLexer lexer;
+    verilog::VerilogParser parser(lexer, reader);
 
-void VerilogReader::read(const std::filesystem::path& p){
-    std::ifstream ifs(p);
-    if (!ifs) {
-        std::cerr << p << ": no such file\n";
+    parser.set_debug_level(1);
+    for (int arg = 1; arg < argc; ++arg) {
+        std::ifstream ifs(argv[arg]);
+        if (!ifs) {
+            std::cerr << argv[arg] << ": no such file\n";
+            continue;
+        }
+        lexer.switch_streams(&ifs, nullptr);
+        std::cout << "reading " << argv[arg] << '\n';
+        parser.parse();
     }
-    lexer_->switch_streams(&ifs, nullptr);
-    parser_->parse();
+    return 0;
 }
-
-}  // namespace verilog

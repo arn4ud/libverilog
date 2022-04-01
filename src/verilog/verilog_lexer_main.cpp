@@ -14,33 +14,26 @@
  * limitations under the License.
  */
 
-#ifndef LIBVERILOG_VERILOG_READER_
-#define LIBVERILOG_VERILOG_READER_
+#include <fstream>
+#include <iostream>
+#include <verilog/verilog_lexer.h>
 
-#include <filesystem>
-#include <optional>
-#include <string>
-#include <vector>
+int main(int argc, char* argv[]) {
+    verilog::VerilogLexer lexer;
 
-namespace verilog {
+    lexer.set_debug(1);
+    for (int arg = 1; arg < argc; ++arg) {
+        std::ifstream ifs(argv[arg]);
+        if (!ifs) {
+            std::cerr << argv[arg] << ": no such file\n";
+            continue;
+        }
+        lexer.switch_streams(&ifs, nullptr);
+        std::cout << "reading " << argv[arg] << '\n';
 
-class VerilogLexer;
-class VerilogParser;
-
-class VerilogReader {
-public:
-    VerilogReader();
-    virtual ~VerilogReader() = default;
-
-    void read(const std::filesystem::path&); 
-
-    virtual void visitModule(std::string&& moduleName) {} 
-
-  private:
-    VerilogLexer* lexer_;
-    VerilogParser* parser_;
-};
-
-}  // namespace verilog
-
-#endif  /* LIBVERILOG_VERILOG_READER_ */
+        while (lexer.get_token().type != 0) {
+            // continue
+        }
+    }
+    return 0;
+}

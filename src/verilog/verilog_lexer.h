@@ -30,10 +30,7 @@ public:
     VerilogLexer() = default;
     ~VerilogLexer() override = default;
 
-    // get rid of override virtual function warning
-    // using FlexLexer::yylex;
-
-    int yylex(verilog::VerilogParser::semantic_type* const lval);
+    VerilogParser::symbol_type get_token();
 };
 
 }  // namespace verilog
