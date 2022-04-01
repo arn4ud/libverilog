@@ -2,11 +2,11 @@ add_library(verilog STATIC "")
 
 target_include_directories(
   verilog
-   PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/..
    PRIVATE
     ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR})
+   PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 FLEX_TARGET(
   verilog_lexer
@@ -32,7 +32,6 @@ target_sources(
     ${CMAKE_CURRENT_SOURCE_DIR}/verilog_reader.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/verilog_writer.cpp)
 
-include(GNUInstallDirs)
 install(
   TARGETS verilog
     ARCHIVE

@@ -11,3 +11,8 @@ find_package(BISON REQUIRED)
 
 enable_testing()
 add_subdirectory(src)
+
+include(CTest)
+enable_testing()
+add_subdirectory(thirdparty)
+add_subdirectory(test)

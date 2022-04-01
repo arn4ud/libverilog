@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-#include <verilog/verilog_reader.h>
+#include "verilog_reader.h"
 
 class MyVerilogReader final : public verilog::VerilogReader {
 public:
